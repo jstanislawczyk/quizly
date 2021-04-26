@@ -21,6 +21,7 @@ public class Question {
     private String photoUrl;
 
     @Enumerated(EnumType.STRING)
+    @Column(length = 30)
     private QuestionType questionType;
 
     @OneToMany(mappedBy = "question")
