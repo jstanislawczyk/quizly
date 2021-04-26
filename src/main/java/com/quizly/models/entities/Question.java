@@ -15,6 +15,7 @@ public class Question {
     @GeneratedValue
     private Long id;
 
+    @Column(length = 510)
     private String text;
 
     private String photoUrl;
