@@ -10,7 +10,7 @@ import javax.persistence.*;
 public class Answer {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private char point;
@@ -20,6 +20,6 @@ public class Answer {
     private boolean correct;
 
     @ManyToOne
-    @JoinColumn(nullable = false)
+    @JoinColumn
     private Question question;
 }

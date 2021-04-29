@@ -12,7 +12,7 @@ import java.util.List;
 public class Question {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(length = 510)
@@ -24,6 +24,6 @@ public class Question {
     @Column(length = 30)
     private QuestionType questionType;
 
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     private List<Answer> answers;
 }

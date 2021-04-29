@@ -13,7 +13,6 @@ public class AnswerDtoMapper {
     public Answer toEntity(AnswerDto answerDto) {
         return Answer
                 .builder()
-                    .id(answerDto.getId())
                     .point(answerDto.getPoint())
                     .text(answerDto.getText())
                     .correct(answerDto.isCorrect())
