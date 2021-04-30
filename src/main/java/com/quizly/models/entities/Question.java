@@ -1,13 +1,18 @@
 package com.quizly.models.entities;
 
 import com.quizly.enums.QuestionType;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class Question {
 
@@ -24,6 +29,10 @@ public class Question {
     @Column(length = 30)
     private QuestionType questionType;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+    @OneToMany(
+        mappedBy = "question",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
     private List<Answer> answers;
 }

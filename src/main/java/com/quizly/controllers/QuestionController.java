@@ -10,10 +10,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 @RestController
 @RequestMapping("/questions")
@@ -35,5 +37,13 @@ public class QuestionController {
         final Question savedQuestion = this.questionFacade.saveQuestionWithAnswers(newQuestion, newAnswers);
 
         return this.questionDtoMapper.toDtoWithAnswers(savedQuestion);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(NO_CONTENT)
+    public void deleteQuestion(@PathVariable Long id) {
+        log.info("Deleting question with id=" + id);
+
+        this.questionFacade.deleteQuestionById(id);
     }
 }
