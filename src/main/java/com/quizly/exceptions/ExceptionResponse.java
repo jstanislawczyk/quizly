@@ -7,6 +7,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ExceptionResponse {
 
-    private int code;
-    private String message;
+    private final int code;
+    private final String message;
 }

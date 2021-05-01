@@ -1,5 +1,6 @@
 package com.quizly.facades;
 
+import com.quizly.enums.QuestionType;
 import com.quizly.exceptions.BadRequestException;
 import com.quizly.exceptions.NotFoundException;
 import com.quizly.models.entities.Answer;
@@ -19,6 +20,10 @@ public class QuestionFacade {
     private final QuestionService questionService;
     private final AnswerService answerService;
 
+    public List<Question> getQuestionsList(final List<QuestionType> types, final int quantity) {
+        return this.questionService.getQuestionsList(types, quantity);
+    }
+
     public Question saveQuestionWithAnswers(final Question question, final List<Answer> answers) {
         this.validateAnswers(question, answers);
         final Question savedQuestion = this.questionService.saveQuestion(question);
@@ -32,22 +37,21 @@ public class QuestionFacade {
     public void deleteQuestionById(final Long id) {
         this.questionService
                 .findQuestionById(id)
-                .orElseThrow(() -> new NotFoundException("Question with id=" + id + " not found"));
+                .orElseThrow(() ->
+                    new NotFoundException("Question with id=" + id + " not found")
+                );
         this.questionService.deleteQuestionById(id);
     }
 
     private void validateAnswers(final Question question, final List<Answer> answers) {
         switch (question.getQuestionType()) {
-            case SINGLE_CHOICE: {
+            case SINGLE_CHOICE -> {
                 this.validateSingleChoiceQuestion(answers);
-                break;
             }
-            case MULTI_CHOICE: {
+            case MULTI_CHOICE -> {
                 this.validateMultiChoiceQuestion(answers);
-                break;
             }
-            case OPEN: {
-                break;
+            case OPEN -> {
             }
         }
     }

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -41,5 +42,12 @@ public class QuestionDtoMapper {
         questionDto.setAnswers(answersDtos);
 
         return questionDto;
+    }
+
+    public List<QuestionDto> toDtoList(List<Question> questions) {
+        return questions
+                .stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
     }
 }

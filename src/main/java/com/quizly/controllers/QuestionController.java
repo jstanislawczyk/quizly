@@ -1,5 +1,6 @@
 package com.quizly.controllers;
 
+import com.quizly.enums.QuestionType;
 import com.quizly.facades.QuestionFacade;
 import com.quizly.mappers.AnswerDtoMapper;
 import com.quizly.mappers.QuestionDtoMapper;
@@ -10,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
-import javax.websocket.server.PathParam;
 
 import java.util.List;
 
@@ -27,6 +27,18 @@ public class QuestionController {
     private final QuestionDtoMapper questionDtoMapper;
     private final AnswerDtoMapper answerDtoMapper;
 
+    @GetMapping
+    public List<QuestionDto> getQuestions(
+        @RequestParam(defaultValue = "SINGLE_CHOICE") final List<QuestionType> types,
+        @RequestParam(defaultValue = "10") final int quantity
+    ) {
+        log.info("Fetching questions list");
+
+        final List<Question> questions = this.questionFacade.getQuestionsList(types, quantity);
+
+        return questionDtoMapper.toDtoList(questions);
+    }
+
     @PostMapping
     @ResponseStatus(CREATED)
     public QuestionDto saveQuestion(@RequestBody @Valid final QuestionDto questionDto) {
@@ -41,7 +53,7 @@ public class QuestionController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(NO_CONTENT)
-    public void deleteQuestion(@PathVariable Long id) {
+    public void deleteQuestion(@PathVariable final Long id) {
         log.info("Deleting question with id=" + id);
 
         this.questionFacade.deleteQuestionById(id);
