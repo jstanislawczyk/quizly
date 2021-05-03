@@ -21,7 +21,7 @@ public class QuestionFacade {
     private final AnswerService answerService;
 
     public List<Question> getQuestionsList(final List<QuestionType> types, final int quantity) {
-        return this.questionService.getQuestionsList(types, quantity);
+        return this.questionService.getRandomQuestionsList(types, quantity);
     }
 
     public Question saveQuestionWithAnswers(final Question question, final List<Answer> answers) {

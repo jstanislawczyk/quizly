@@ -17,7 +17,7 @@ public class QuestionService {
 
     private final QuestionRepository questionRepository;
 
-    public List<Question> getQuestionsList(final List<QuestionType> types, final int quantity) {
+    public List<Question> getRandomQuestionsList(final List<QuestionType> types, final int quantity) {
         final List<String> questionTypesStrings = types
                 .stream()
                 .map(Enum::name)
