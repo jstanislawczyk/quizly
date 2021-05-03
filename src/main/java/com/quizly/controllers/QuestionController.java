@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public class QuestionController {
     @GetMapping
     public List<QuestionDto> getQuestions(
         @RequestParam(defaultValue = "SINGLE_CHOICE") final List<QuestionType> types,
-        @RequestParam(defaultValue = "10") @Min(1) final int quantity
+        @RequestParam(defaultValue = "10") @Min(1) @Max(100) final int quantity
     ) {
         log.info("Fetching questions list");
 
