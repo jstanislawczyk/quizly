@@ -9,8 +9,10 @@ import com.quizly.models.entities.Answer;
 import com.quizly.models.entities.Question;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 
 import java.util.List;
 
@@ -19,6 +21,7 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 @RestController
 @RequestMapping("/questions")
+@Validated
 @RequiredArgsConstructor
 @Slf4j
 public class QuestionController {
@@ -30,7 +33,7 @@ public class QuestionController {
     @GetMapping
     public List<QuestionDto> getQuestions(
         @RequestParam(defaultValue = "SINGLE_CHOICE") final List<QuestionType> types,
-        @RequestParam(defaultValue = "10") final int quantity
+        @RequestParam(defaultValue = "10") @Min(1) final int quantity
     ) {
         log.info("Fetching questions list");
 

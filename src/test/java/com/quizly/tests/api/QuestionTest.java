@@ -14,6 +14,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -162,6 +164,39 @@ class QuestionTest extends ApiTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)));
+    }
+
+    @Test
+    void deleteQuestion_ShouldNotFoundNotExistingQuestion_NotFound() throws Exception {
+        // When & Then
+        mvc.perform(
+                delete("/questions/1111")
+                    .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code", is(404)))
+                .andExpect(jsonPath("$.message", is("Question with id=1111 not found")));
+    }
+
+    @Test
+    void deleteQuestion_ShouldNotFoundNotExistingQuestion_NoContent() throws Exception {
+        // Given
+        final Question existingQuestion =
+                Question
+                    .builder()
+                    .text("Question 1")
+                    .questionType(QuestionType.SINGLE_CHOICE)
+                    .photoUrl("http://testurlofphoto1.com")
+                    .build();
+
+        this.questionRepository.save(existingQuestion);
+
+        // When & Then
+        mvc.perform(
+                delete("/questions/{id}", existingQuestion.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isNoContent());
     }
 
     private List<Question> getOrderedQuestionsList(final String json) throws JsonProcessingException {
