@@ -3,8 +3,11 @@ package com.quizly.tests.api;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.quizly.enums.QuestionType;
+import com.quizly.models.dtos.AnswerDto;
+import com.quizly.models.dtos.QuestionDto;
 import com.quizly.models.entities.Question;
 import com.quizly.repositories.QuestionRepository;
+import com.quizly.utils.ObjectUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -50,19 +53,19 @@ class QuestionTest extends ApiTest {
                 .builder()
                     .text("Question 1")
                     .questionType(QuestionType.SINGLE_CHOICE)
-                    .photoUrl("http://testurlofphoto1.com")
+                    .photoUrl("https://testurlofphoto1.com")
                 .build(),
             Question
                 .builder()
                     .text("Question 2")
                     .questionType(QuestionType.MULTI_CHOICE)
-                    .photoUrl("http://testurlofphoto2.com")
+                    .photoUrl("https://testurlofphoto2.com")
                 .build(),
             Question
                 .builder()
                     .text("Question 3")
                     .questionType(QuestionType.OPEN)
-                    .photoUrl("http://testurlofphoto3.com")
+                    .photoUrl("https://testurlofphoto3.com")
                 .build()
         );
 
@@ -95,19 +98,19 @@ class QuestionTest extends ApiTest {
                 .builder()
                     .text("Question 1")
                     .questionType(QuestionType.SINGLE_CHOICE)
-                    .photoUrl("http://testurlofphoto1.com")
+                    .photoUrl("https://testurlofphoto1.com")
                 .build(),
             Question
                 .builder()
                     .text("Question 2")
                     .questionType(QuestionType.MULTI_CHOICE)
-                    .photoUrl("http://testurlofphoto2.com")
+                    .photoUrl("https://testurlofphoto2.com")
                 .build(),
             Question
                 .builder()
                     .text("Question 3")
                     .questionType(QuestionType.OPEN)
-                    .photoUrl("http://testurlofphoto3.com")
+                    .photoUrl("https://testurlofphoto3.com")
                 .build()
         );
 
@@ -139,19 +142,19 @@ class QuestionTest extends ApiTest {
                 .builder()
                     .text("Question 1")
                     .questionType(QuestionType.SINGLE_CHOICE)
-                    .photoUrl("http://testurlofphoto1.com")
+                    .photoUrl("https://testurlofphoto1.com")
                 .build(),
             Question
                 .builder()
                     .text("Question 2")
                     .questionType(QuestionType.SINGLE_CHOICE)
-                    .photoUrl("http://testurlofphoto2.com")
+                    .photoUrl("https://testurlofphoto2.com")
                 .build(),
             Question
                 .builder()
                     .text("Question 3")
                     .questionType(QuestionType.SINGLE_CHOICE)
-                    .photoUrl("http://testurlofphoto3.com")
+                    .photoUrl("https://testurlofphoto3.com")
                 .build()
         );
 
@@ -164,6 +167,69 @@ class QuestionTest extends ApiTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)));
+    }
+
+    @Test
+    void saveQuestion_ShouldFailDtoValidation_BadRequest() throws Exception {
+        // Given
+        final QuestionDto newQuestion = QuestionDto
+                .builder()
+                    .text("Question 1")
+                    .photoUrl("U")
+                    .questionType(QuestionType.SINGLE_CHOICE)
+                .build();
+
+        // When & Then
+        mvc.perform(
+                post("/questions")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(ObjectUtils.convertObjectToJsonBytes(newQuestion))
+                )
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void saveQuestion_ShouldSave_Created() throws Exception {
+        // Given
+        final List<AnswerDto> answers = List.of(
+            AnswerDto
+                .builder()
+                    .point('A')
+                    .text("Answer A")
+                    .correct(true)
+                .build(),
+            AnswerDto
+                .builder()
+                    .point('B')
+                    .text("Answer B")
+                    .correct(false)
+                .build()
+        );
+        final QuestionDto newQuestion = QuestionDto
+                .builder()
+                    .text("Question 1")
+                    .photoUrl("https://testurlofphoto3.com")
+                    .questionType(QuestionType.SINGLE_CHOICE)
+                    .answers(answers)
+                .build();
+
+        // When & Then
+        mvc.perform(
+                post("/questions")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(ObjectUtils.convertObjectToJsonBytes(newQuestion))
+                )
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.text", is(newQuestion.getText())))
+                .andExpect(jsonPath("$.photoUrl", is(newQuestion.getPhotoUrl())))
+                .andExpect(jsonPath("$.questionType", is(newQuestion.getQuestionType().name())))
+                .andExpect(jsonPath("$.answers", hasSize(2)))
+                .andExpect(jsonPath("$.answers[0].point", is(String.valueOf(newQuestion.getAnswers().get(0).getPoint()))))
+                .andExpect(jsonPath("$.answers[0].text", is(newQuestion.getAnswers().get(0).getText())))
+                .andExpect(jsonPath("$.answers[0].correct", is(true)))
+                .andExpect(jsonPath("$.answers[1].point", is(String.valueOf(newQuestion.getAnswers().get(1).getPoint()))))
+                .andExpect(jsonPath("$.answers[1].text", is(newQuestion.getAnswers().get(1).getText())))
+                .andExpect(jsonPath("$.answers[1].correct", is(false)));
     }
 
     @Test
