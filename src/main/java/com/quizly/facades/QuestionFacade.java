@@ -45,35 +45,45 @@ public class QuestionFacade {
 
     private void validateAnswers(final Question question, final List<Answer> answers) {
         switch (question.getQuestionType()) {
-            case SINGLE_CHOICE -> {
-                this.validateSingleChoiceQuestion(answers);
-            }
-            case MULTI_CHOICE -> {
-                this.validateMultiChoiceQuestion(answers);
-            }
-            case OPEN -> {
-            }
+            case SINGLE_CHOICE -> this.validateSingleChoiceQuestion(answers);
+            case MULTI_CHOICE -> this.validateMultiChoiceQuestion(answers);
+            case OPEN -> {}
         }
     }
 
     private void validateSingleChoiceQuestion(final List<Answer> answers) {
+        if (answers.size() < 2) {
+            throw new BadRequestException("Single choice question must contain at least two answers");
+        }
+
+        if (this.hasNotSingleCorrectAnswer(answers)) {
+            throw new BadRequestException("Single choice question must contain one correct answer");
+        }
+    }
+
+    private boolean hasNotSingleCorrectAnswer(final List<Answer> answers) {
         final List<Answer> correctAnswers = answers
                 .stream()
                 .filter(Answer::isCorrect)
                 .collect(Collectors.toList());
 
-        if (correctAnswers.size() != 1) {
-            throw new BadRequestException("Single choice question must contain one correct answer");
-        }
+        return correctAnswers.size() != 1;
     }
 
     private void validateMultiChoiceQuestion(final List<Answer> answers) {
-        final boolean hasNoCorrectAnswer = answers
-                .stream()
-                .noneMatch(Answer::isCorrect);
+        if (answers.size() < 3) {
+            throw new BadRequestException("Single choice question must contain at least three answers");
+        }
 
-        if (hasNoCorrectAnswer) {
+        if (this.hasNoCorrectAnswer(answers)) {
             throw new BadRequestException("Multi choice question must contain at least one correct answer");
         }
     }
+
+    private boolean hasNoCorrectAnswer(final List<Answer> answers) {
+        return answers
+            .stream()
+            .noneMatch(Answer::isCorrect);
+    }
+
 }

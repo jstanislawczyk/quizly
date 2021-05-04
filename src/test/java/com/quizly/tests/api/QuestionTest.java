@@ -189,6 +189,84 @@ class QuestionTest extends ApiTest {
     }
 
     @Test
+    void saveQuestion_ShouldFailValidationForSingleChoiceQuestion_BadRequest() throws Exception {
+        // Given
+        final List<AnswerDto> answers = List.of(
+            AnswerDto
+                .builder()
+                    .point('A')
+                    .text("Answer A")
+                    .correct(true)
+                .build(),
+            AnswerDto
+                .builder()
+                    .point('B')
+                    .text("Answer B")
+                    .correct(true)
+                .build()
+        );
+        final QuestionDto newQuestion = QuestionDto
+                .builder()
+                    .text("Question 1")
+                    .photoUrl("https://testurlofphoto3.com")
+                    .questionType(QuestionType.SINGLE_CHOICE)
+                    .answers(answers)
+                .build();
+
+        // When & Then
+        mvc.perform(
+                post("/questions")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(ObjectUtils.convertObjectToJsonBytes(newQuestion))
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code", is(400)))
+                .andExpect(jsonPath("$.message", is("Single choice question must contain one correct answer")));
+    }
+
+    @Test
+    void saveQuestion_ShouldFailValidationForMultiChoiceQuestion_BadRequest() throws Exception {
+        // Given
+        final List<AnswerDto> answers = List.of(
+            AnswerDto
+                .builder()
+                    .point('A')
+                    .text("Answer A")
+                    .correct(false)
+                .build(),
+            AnswerDto
+                .builder()
+                    .point('B')
+                    .text("Answer B")
+                    .correct(false)
+                .build(),
+            AnswerDto
+                .builder()
+                    .point('C')
+                    .text("Answer C")
+                    .correct(false)
+                .build()
+        );
+        final QuestionDto newQuestion = QuestionDto
+                .builder()
+                .text("Question 1")
+                .photoUrl("https://testurlofphoto3.com")
+                .questionType(QuestionType.MULTI_CHOICE)
+                .answers(answers)
+                .build();
+
+        // When & Then
+        mvc.perform(
+                post("/questions")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(ObjectUtils.convertObjectToJsonBytes(newQuestion))
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code", is(400)))
+                .andExpect(jsonPath("$.message", is("Multi choice question must contain at least one correct answer")));
+    }
+
+    @Test
     void saveQuestion_ShouldSave_Created() throws Exception {
         // Given
         final List<AnswerDto> answers = List.of(
