@@ -267,6 +267,36 @@ class QuestionTest extends ApiTest {
     }
 
     @Test
+    void saveQuestion_ShouldFailValidationForOpenQuestion_BadRequest() throws Exception {
+        // Given
+        final List<AnswerDto> answers = List.of(
+                AnswerDto
+                    .builder()
+                        .point('A')
+                        .text("Answer A")
+                        .correct(true)
+                    .build()
+        );
+        final QuestionDto newQuestion = QuestionDto
+                .builder()
+                .text("Question 1")
+                .photoUrl("https://testurlofphoto3.com")
+                .questionType(QuestionType.OPEN)
+                .answers(answers)
+                .build();
+
+        // When & Then
+        mvc.perform(
+                post("/questions")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(ObjectUtils.convertObjectToJsonBytes(newQuestion))
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code", is(400)))
+                .andExpect(jsonPath("$.message", is("Open question cannot have answers")));
+    }
+
+    @Test
     void saveQuestion_ShouldSave_Created() throws Exception {
         // Given
         final List<AnswerDto> answers = List.of(

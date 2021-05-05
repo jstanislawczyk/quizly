@@ -47,7 +47,7 @@ public class QuestionFacade {
         switch (question.getQuestionType()) {
             case SINGLE_CHOICE -> this.validateSingleChoiceQuestion(answers);
             case MULTI_CHOICE -> this.validateMultiChoiceQuestion(answers);
-            case OPEN -> {}
+            case OPEN -> this.validateOpenQuestion(answers);
         }
     }
 
@@ -72,7 +72,7 @@ public class QuestionFacade {
 
     private void validateMultiChoiceQuestion(final List<Answer> answers) {
         if (answers.size() < 3) {
-            throw new BadRequestException("Single choice question must contain at least three answers");
+            throw new BadRequestException("Multi choice question must contain at least three answers");
         }
 
         if (this.hasNoCorrectAnswer(answers)) {
@@ -86,4 +86,9 @@ public class QuestionFacade {
             .noneMatch(Answer::isCorrect);
     }
 
+    private void validateOpenQuestion(final List<Answer> answers) {
+        if (!answers.isEmpty()) {
+            throw new BadRequestException("Open question cannot have answers");
+        }
+    }
 }
