@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 @Component
 public class AnswerDtoMapper {
 
-    public Answer toEntity(AnswerDto answerDto) {
+    public Answer toEntity(final AnswerDto answerDto) {
         return Answer
                 .builder()
                     .point(answerDto.getPoint())
@@ -19,7 +19,7 @@ public class AnswerDtoMapper {
                 .build();
     }
 
-    public AnswerDto toDto(Answer answer) {
+    public AnswerDto toDto(final Answer answer) {
         return AnswerDto
                 .builder()
                     .id(answer.getId())
@@ -29,14 +29,14 @@ public class AnswerDtoMapper {
                 .build();
     }
 
-    public List<Answer> toEntityList(List<AnswerDto> answerDtoList) {
+    public List<Answer> toEntityList(final List<AnswerDto> answerDtoList) {
         return answerDtoList
                 .stream()
                 .map(this::toEntity)
                 .collect(Collectors.toList());
     }
 
-    public List<AnswerDto> toDtoList(List<Answer> answerList) {
+    public List<AnswerDto> toDtoList(final List<Answer> answerList) {
         return answerList
                 .stream()
                 .map(this::toDto)

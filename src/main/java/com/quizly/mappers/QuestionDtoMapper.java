@@ -16,7 +16,7 @@ public class QuestionDtoMapper {
 
     private final AnswerDtoMapper answerDtoMapper;
 
-    public Question toEntity(QuestionDto questionDto) {
+    public Question toEntity(final QuestionDto questionDto) {
         return Question
                 .builder()
                     .text(questionDto.getText())
@@ -25,7 +25,7 @@ public class QuestionDtoMapper {
                 .build();
     }
 
-    public QuestionDto toDto(Question question) {
+    public QuestionDto toDto(final Question question) {
         return QuestionDto
                 .builder()
                     .id(question.getId())
@@ -35,7 +35,7 @@ public class QuestionDtoMapper {
                 .build();
     }
 
-    public QuestionDto toDtoWithAnswers(Question question) {
+    public QuestionDto toDtoWithAnswers(final Question question) {
         final QuestionDto questionDto = this.toDto(question);
         final List<AnswerDto> answersDtos = this.answerDtoMapper.toDtoList(question.getAnswers());
 
@@ -44,7 +44,7 @@ public class QuestionDtoMapper {
         return questionDto;
     }
 
-    public List<QuestionDto> toDtoList(List<Question> questions) {
+    public List<QuestionDto> toDtoList(final List<Question> questions) {
         return questions
                 .stream()
                 .map(this::toDto)
