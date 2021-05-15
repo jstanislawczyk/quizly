@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.validation.constraints.Min;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -19,5 +20,11 @@ public class QuizDto {
 
     private LocalDateTime startedAt;
 
-    private LocalDateTime endedAt;
+    private LocalDateTime finishedAt;
+
+    private int correctQuestions;
+
+    private int totalQuestions;
+
+    private List<QuestionDto> questions;
 }

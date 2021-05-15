@@ -2,7 +2,10 @@ package com.quizly.controllers;
 
 import com.quizly.enums.QuestionType;
 import com.quizly.facades.QuizFacade;
+import com.quizly.mappers.QuestionAnswerMapper;
 import com.quizly.mappers.QuizDtoMapper;
+import com.quizly.models.common.QuestionAnswer;
+import com.quizly.models.dtos.QuestionAnswerDto;
 import com.quizly.models.dtos.QuizDto;
 import com.quizly.models.entities.Quiz;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +30,7 @@ public class QuizController {
 
     private final QuizFacade quizFacade;
     private final QuizDtoMapper quizDtoMapper;
+    private final QuestionAnswerMapper questionAnswerMapper;
 
     @PostMapping
     @ResponseStatus(CREATED)
@@ -35,11 +39,24 @@ public class QuizController {
         @RequestParam(defaultValue = "SINGLE_CHOICE") final List<QuestionType> types,
         @RequestParam(defaultValue = "10") @Min(1) @Max(100) final int quantity
     ) {
-        log.info("Preparing quiz");
+        log.info("Preparing quiz with {} questions and types {}", quantity, types);
 
         final Quiz quiz = this.quizDtoMapper.toEntity(quizDto);
         final Quiz savedQuiz = this.quizFacade.createQuiz(quiz, types, quantity);
 
         return this.quizDtoMapper.toDto(savedQuiz);
+    }
+
+    @PatchMapping("/{uniqueQuizCode}")
+    public QuizDto finishQuiz(
+        @PathVariable final String uniqueQuizCode,
+        @RequestBody @Valid final List<QuestionAnswerDto> questionAnswerDtos
+    ) {
+        log.info("Finishing quiz with code=" + uniqueQuizCode);
+
+        final List<QuestionAnswer> questionAnswers = this.questionAnswerMapper.toModelList(questionAnswerDtos);
+        final Quiz finishedQuiz = this.quizFacade.finishQuiz(uniqueQuizCode, questionAnswers);
+
+        return this.quizDtoMapper.toDtoWithAnswers(finishedQuiz);
     }
 }

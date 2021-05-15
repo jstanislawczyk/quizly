@@ -19,6 +19,7 @@ public class QuestionDtoMapper {
     public Question toEntity(final QuestionDto questionDto) {
         return Question
                 .builder()
+                    .points(questionDto.getPoints())
                     .text(questionDto.getText())
                     .photoUrl(questionDto.getPhotoUrl())
                     .questionType(questionDto.getQuestionType())
@@ -29,6 +30,7 @@ public class QuestionDtoMapper {
         return QuestionDto
                 .builder()
                     .id(question.getId())
+                    .points(question.getPoints())
                     .text(question.getText())
                     .photoUrl(question.getPhotoUrl())
                     .questionType(question.getQuestionType())
@@ -48,6 +50,13 @@ public class QuestionDtoMapper {
         return questions
                 .stream()
                 .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<QuestionDto> toDtoListWithAnswers(final List<Question> questions) {
+        return questions
+                .stream()
+                .map(this::toDtoWithAnswers)
                 .collect(Collectors.toList());
     }
 }
