@@ -13,7 +13,7 @@ public class AnswerDtoMapper {
     public Answer toEntity(final AnswerDto answerDto) {
         return Answer
                 .builder()
-                    .point(answerDto.getPoint())
+                    .answerOption(answerDto.getAnswerOption())
                     .text(answerDto.getText())
                     .correct(answerDto.isCorrect())
                 .build();
@@ -23,7 +23,7 @@ public class AnswerDtoMapper {
         return AnswerDto
                 .builder()
                     .id(answer.getId())
-                    .point(answer.getPoint())
+                    .answerOption(answer.getAnswerOption())
                     .text(answer.getText())
                     .correct(answer.isCorrect())
                 .build();

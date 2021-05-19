@@ -18,7 +18,7 @@ public class Answer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private char point;
+    private char answerOption;
 
     private String text;
 

@@ -204,13 +204,13 @@ class QuestionTest extends ApiTest {
         final List<AnswerDto> answers = List.of(
             AnswerDto
                 .builder()
-                    .point('A')
+                    .answerOption('A')
                     .text("Answer A")
                     .correct(true)
                 .build(),
             AnswerDto
                 .builder()
-                    .point('B')
+                    .answerOption('B')
                     .text("Answer B")
                     .correct(true)
                 .build()
@@ -241,19 +241,19 @@ class QuestionTest extends ApiTest {
         final List<AnswerDto> answers = List.of(
             AnswerDto
                 .builder()
-                    .point('A')
+                    .answerOption('A')
                     .text("Answer A")
                     .correct(false)
                 .build(),
             AnswerDto
                 .builder()
-                    .point('B')
+                    .answerOption('B')
                     .text("Answer B")
                     .correct(false)
                 .build(),
             AnswerDto
                 .builder()
-                    .point('C')
+                    .answerOption('C')
                     .text("Answer C")
                     .correct(false)
                 .build()
@@ -284,7 +284,7 @@ class QuestionTest extends ApiTest {
         final List<AnswerDto> answers = List.of(
                 AnswerDto
                     .builder()
-                        .point('A')
+                        .answerOption('A')
                         .text("Answer A")
                         .correct(true)
                     .build()
@@ -315,13 +315,13 @@ class QuestionTest extends ApiTest {
         final List<AnswerDto> answers = List.of(
             AnswerDto
                 .builder()
-                    .point('A')
+                    .answerOption('A')
                     .text("Answer A")
                     .correct(true)
                 .build(),
             AnswerDto
                 .builder()
-                    .point('B')
+                    .answerOption('B')
                     .text("Answer B")
                     .correct(false)
                 .build()
@@ -346,10 +346,10 @@ class QuestionTest extends ApiTest {
                 .andExpect(jsonPath("$.photoUrl", is(newQuestion.getPhotoUrl())))
                 .andExpect(jsonPath("$.questionType", is(newQuestion.getQuestionType().name())))
                 .andExpect(jsonPath("$.answers", hasSize(2)))
-                .andExpect(jsonPath("$.answers[0].point", is(String.valueOf(newQuestion.getAnswers().get(0).getPoint()))))
+                .andExpect(jsonPath("$.answers[0].point", is(String.valueOf(newQuestion.getAnswers().get(0).getAnswerOption()))))
                 .andExpect(jsonPath("$.answers[0].text", is(newQuestion.getAnswers().get(0).getText())))
                 .andExpect(jsonPath("$.answers[0].correct", is(true)))
-                .andExpect(jsonPath("$.answers[1].point", is(String.valueOf(newQuestion.getAnswers().get(1).getPoint()))))
+                .andExpect(jsonPath("$.answers[1].point", is(String.valueOf(newQuestion.getAnswers().get(1).getAnswerOption()))))
                 .andExpect(jsonPath("$.answers[1].text", is(newQuestion.getAnswers().get(1).getText())))
                 .andExpect(jsonPath("$.answers[1].correct", is(false)));
     }

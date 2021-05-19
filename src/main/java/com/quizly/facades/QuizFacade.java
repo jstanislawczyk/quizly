@@ -10,6 +10,7 @@ import com.quizly.models.entities.Quiz;
 import com.quizly.services.QuestionService;
 import com.quizly.services.QuizService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -47,16 +48,51 @@ public class QuizFacade {
             throw new BadRequestException("Quiz with code=" + uniqueQuizCode + " was already finished");
         }
 
-        final List<Long> questionsIds = quiz.getQuestions()
-                .stream()
-                .map(Question::getId)
-                .collect(Collectors.toList());
-        final List<Question> questionsWithCorrectAnswers = this.questionService.findQuestionsByIdsWithCorrectAnswers(questionsIds);
+        final List<Question> questionsWithCorrectAnswers = this.questionService.getQuestionsByIdsWithCorrectAnswers(quiz.getQuestions());
+        final List<QuestionAnswer> updatedQuestionAnswers = this.updateQuestionAnswersWithQuestionData(questionAnswers, questionsWithCorrectAnswers);
 
         quiz.setFinishedAt(finishTime);
-        this.quizService.saveQuiz(quiz);
         quiz.setQuestions(questionsWithCorrectAnswers);
+        this.quizService.saveQuiz(quiz);
 
         return quiz;
     }
+
+    private List<QuestionAnswer> updateQuestionAnswersWithQuestionData(
+        final List<QuestionAnswer> questionAnswers,
+        final List<Question> questionsWithCorrectAnswers
+    ) {
+        return questionAnswers
+            .stream()
+            .map(questionAnswer -> {
+                final Question questionForAnswer = this.questionService.findQuestionByIdInList(questionAnswer.getQuestionId(), questionsWithCorrectAnswers);
+                final List<Character> correctAnswerPoints = this.getCorrectAnswerPoints(questionForAnswer);
+
+                questionAnswer.setCorrectAnswerOptions(correctAnswerPoints);
+                questionAnswer.setCorrect(CollectionUtils.isEqualCollection(questionAnswer.getAnswerOptions(), correctAnswerPoints));
+                questionAnswer.setPoints(this.getGainedPoints(questionAnswer, questionForAnswer));
+                questionAnswer.setQuestionType(questionForAnswer.getQuestionType());
+
+                return questionAnswer;
+            })
+            .collect(Collectors.toList());
+    }
+
+    private List<Character> getCorrectAnswerPoints(final Question question) {
+        return question
+                .getAnswers()
+                .stream()
+                .map(Answer::getAnswerOption)
+                .collect(Collectors.toList());
+    }
+
+    private int getGainedPoints(final QuestionAnswer questionAnswer, final Question question) {
+        if (question.getQuestionType().equals(QuestionType.OPEN)) {
+            return 0;
+        }
+
+        return questionAnswer.isCorrect()
+            ? question.getPoints()
+            : 0;
+    };
 }

@@ -10,7 +10,7 @@ public class AnswerDto {
 
     private Long id;
 
-    private char point;
+    private char answerOption;
 
     @Size(min = 1, max = 255)
     private String text;

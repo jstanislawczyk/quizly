@@ -1,6 +1,7 @@
 package com.quizly.services;
 
 import com.quizly.enums.QuestionType;
+import com.quizly.exceptions.NotFoundException;
 import com.quizly.models.entities.Answer;
 import com.quizly.models.entities.Question;
 import com.quizly.repositories.QuestionRepository;
@@ -31,14 +32,13 @@ public class QuestionService {
         return this.questionRepository.findById(id);
     }
 
-    public List<Question> findQuestionsByIdsWithCorrectAnswers(final List<Long> ids) {
-        final List<Question> questions = this.questionRepository.findQuestionsByIdIn(ids);
-
+    public List<Question> getQuestionsByIdsWithCorrectAnswers(final List<Question> questions) {
         return questions
                 .stream()
                 .map(question ->
                     Question.builder()
                         .id(question.getId())
+                        .points(question.getPoints())
                         .questionType(question.getQuestionType())
                         .answers(
                             question.getAnswers()
@@ -49,6 +49,18 @@ public class QuestionService {
                         .build()
                 )
                 .collect(Collectors.toList());
+    }
+
+    public Question findQuestionByIdInList(final Long id, final List<Question> questions) {
+        return questions
+            .stream()
+            .filter(question ->
+                question.getId().equals(id)
+            )
+            .findAny()
+            .orElseThrow(() ->
+                new NotFoundException("Answer for question with id=" + id + " not found")
+            );
     }
 
     public Question saveQuestion(final Question question) {

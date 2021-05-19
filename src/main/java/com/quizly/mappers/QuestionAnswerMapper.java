@@ -14,7 +14,7 @@ public class QuestionAnswerMapper {
         return QuestionAnswer
                 .builder()
                     .questionId(questionAnswerDto.getQuestionId())
-                    .answerPoint(questionAnswerDto.getAnswerPoint())
+                    .answerOptions(questionAnswerDto.getAnswerOptions())
                     .answerText(questionAnswerDto.getAnswerText())
                 .build();
     }
