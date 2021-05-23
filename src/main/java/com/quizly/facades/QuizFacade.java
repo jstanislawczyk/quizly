@@ -40,19 +40,26 @@ public class QuizFacade {
                     new NotFoundException("Quiz with code=" + uniqueQuizCode + " not found")
                 );
 
+        if (quiz.getFinishedAt() != null) {
+            throw new BadRequestException("Quiz with code=" + uniqueQuizCode + " was already finished");
+        }
+
         if (this.quizService.isQuizOutOfDate(quiz, finishTime)) {
             throw new BadRequestException("Quiz with code=" + uniqueQuizCode + " is out of date");
         }
 
-        if (false) {
-            throw new BadRequestException("Quiz with code=" + uniqueQuizCode + " was already finished");
-        }
-
         final List<Question> questionsWithCorrectAnswers = this.questionService.getQuestionsByIdsWithCorrectAnswers(quiz.getQuestions());
         final List<QuestionAnswer> updatedQuestionAnswers = this.updateQuestionAnswersWithQuestionData(questionAnswers, questionsWithCorrectAnswers);
+        final int correctQuestionsNumber = (int) updatedQuestionAnswers
+                .stream()
+                .filter(QuestionAnswer::isCorrect)
+                .count();
 
         quiz.setFinishedAt(finishTime);
         quiz.setQuestions(questionsWithCorrectAnswers);
+        quiz.setTotalQuestions(quiz.getQuestions().size());
+        quiz.setCorrectQuestions(correctQuestionsNumber);
+
         this.quizService.saveQuiz(quiz);
 
         return quiz;
@@ -94,5 +101,5 @@ public class QuizFacade {
         return questionAnswer.isCorrect()
             ? question.getPoints()
             : 0;
-    };
+    }
 }
