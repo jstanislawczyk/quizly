@@ -346,10 +346,10 @@ class QuestionTest extends ApiTest {
                 .andExpect(jsonPath("$.photoUrl", is(newQuestion.getPhotoUrl())))
                 .andExpect(jsonPath("$.questionType", is(newQuestion.getQuestionType().name())))
                 .andExpect(jsonPath("$.answers", hasSize(2)))
-                .andExpect(jsonPath("$.answers[0].point", is(String.valueOf(newQuestion.getAnswers().get(0).getAnswerOption()))))
+                .andExpect(jsonPath("$.answers[0].answerOption", is(String.valueOf(newQuestion.getAnswers().get(0).getAnswerOption()))))
                 .andExpect(jsonPath("$.answers[0].text", is(newQuestion.getAnswers().get(0).getText())))
                 .andExpect(jsonPath("$.answers[0].correct", is(true)))
-                .andExpect(jsonPath("$.answers[1].point", is(String.valueOf(newQuestion.getAnswers().get(1).getAnswerOption()))))
+                .andExpect(jsonPath("$.answers[1].answerOption", is(String.valueOf(newQuestion.getAnswers().get(1).getAnswerOption()))))
                 .andExpect(jsonPath("$.answers[1].text", is(newQuestion.getAnswers().get(1).getText())))
                 .andExpect(jsonPath("$.answers[1].correct", is(false)));
     }
