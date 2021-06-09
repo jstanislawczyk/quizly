@@ -20,6 +20,8 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private int points;
+
     @Column(length = 510)
     private String text;
 
@@ -28,6 +30,9 @@ public class Question {
     @Enumerated(EnumType.STRING)
     @Column(length = 30)
     private QuestionType questionType;
+
+    @ManyToMany(mappedBy = "questions")
+    private List<Quiz> quizzes;
 
     @OneToMany(
         mappedBy = "question",

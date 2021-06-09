@@ -51,18 +51,21 @@ class QuestionTest extends ApiTest {
         final List<Question> existingQuestions = List.of(
             Question
                 .builder()
+                    .points(1)
                     .text("Question 1")
                     .questionType(QuestionType.SINGLE_CHOICE)
                     .photoUrl("https://testurlofphoto1.com")
                 .build(),
             Question
                 .builder()
+                    .points(2)
                     .text("Question 2")
                     .questionType(QuestionType.MULTI_CHOICE)
                     .photoUrl("https://testurlofphoto2.com")
                 .build(),
             Question
                 .builder()
+                    .points(3)
                     .text("Question 3")
                     .questionType(QuestionType.OPEN)
                     .photoUrl("https://testurlofphoto3.com")
@@ -96,18 +99,21 @@ class QuestionTest extends ApiTest {
         final List<Question> existingQuestions = List.of(
             Question
                 .builder()
+                    .points(1)
                     .text("Question 1")
                     .questionType(QuestionType.SINGLE_CHOICE)
                     .photoUrl("https://testurlofphoto1.com")
                 .build(),
             Question
                 .builder()
+                    .points(1)
                     .text("Question 2")
                     .questionType(QuestionType.MULTI_CHOICE)
                     .photoUrl("https://testurlofphoto2.com")
                 .build(),
             Question
                 .builder()
+                    .points(1)
                     .text("Question 3")
                     .questionType(QuestionType.OPEN)
                     .photoUrl("https://testurlofphoto3.com")
@@ -140,18 +146,21 @@ class QuestionTest extends ApiTest {
         final List<Question> existingQuestions = List.of(
             Question
                 .builder()
+                    .points(1)
                     .text("Question 1")
                     .questionType(QuestionType.SINGLE_CHOICE)
                     .photoUrl("https://testurlofphoto1.com")
                 .build(),
             Question
                 .builder()
+                    .points(1)
                     .text("Question 2")
                     .questionType(QuestionType.SINGLE_CHOICE)
                     .photoUrl("https://testurlofphoto2.com")
                 .build(),
             Question
                 .builder()
+                    .points(1)
                     .text("Question 3")
                     .questionType(QuestionType.SINGLE_CHOICE)
                     .photoUrl("https://testurlofphoto3.com")
@@ -174,6 +183,7 @@ class QuestionTest extends ApiTest {
         // Given
         final QuestionDto newQuestion = QuestionDto
                 .builder()
+                    .points(1)
                     .text("Question 1")
                     .photoUrl("U")
                     .questionType(QuestionType.SINGLE_CHOICE)
@@ -194,19 +204,20 @@ class QuestionTest extends ApiTest {
         final List<AnswerDto> answers = List.of(
             AnswerDto
                 .builder()
-                    .point('A')
+                    .answerOption('A')
                     .text("Answer A")
                     .correct(true)
                 .build(),
             AnswerDto
                 .builder()
-                    .point('B')
+                    .answerOption('B')
                     .text("Answer B")
                     .correct(true)
                 .build()
         );
         final QuestionDto newQuestion = QuestionDto
                 .builder()
+                    .points(1)
                     .text("Question 1")
                     .photoUrl("https://testurlofphoto3.com")
                     .questionType(QuestionType.SINGLE_CHOICE)
@@ -230,29 +241,30 @@ class QuestionTest extends ApiTest {
         final List<AnswerDto> answers = List.of(
             AnswerDto
                 .builder()
-                    .point('A')
+                    .answerOption('A')
                     .text("Answer A")
                     .correct(false)
                 .build(),
             AnswerDto
                 .builder()
-                    .point('B')
+                    .answerOption('B')
                     .text("Answer B")
                     .correct(false)
                 .build(),
             AnswerDto
                 .builder()
-                    .point('C')
+                    .answerOption('C')
                     .text("Answer C")
                     .correct(false)
                 .build()
         );
         final QuestionDto newQuestion = QuestionDto
                 .builder()
-                .text("Question 1")
-                .photoUrl("https://testurlofphoto3.com")
-                .questionType(QuestionType.MULTI_CHOICE)
-                .answers(answers)
+                    .points(1)
+                    .text("Question 1")
+                    .photoUrl("https://testurlofphoto3.com")
+                    .questionType(QuestionType.MULTI_CHOICE)
+                    .answers(answers)
                 .build();
 
         // When & Then
@@ -272,17 +284,18 @@ class QuestionTest extends ApiTest {
         final List<AnswerDto> answers = List.of(
                 AnswerDto
                     .builder()
-                        .point('A')
+                        .answerOption('A')
                         .text("Answer A")
                         .correct(true)
                     .build()
         );
         final QuestionDto newQuestion = QuestionDto
                 .builder()
-                .text("Question 1")
-                .photoUrl("https://testurlofphoto3.com")
-                .questionType(QuestionType.OPEN)
-                .answers(answers)
+                    .points(1)
+                    .text("Question 1")
+                    .photoUrl("https://testurlofphoto3.com")
+                    .questionType(QuestionType.OPEN)
+                    .answers(answers)
                 .build();
 
         // When & Then
@@ -302,19 +315,20 @@ class QuestionTest extends ApiTest {
         final List<AnswerDto> answers = List.of(
             AnswerDto
                 .builder()
-                    .point('A')
+                    .answerOption('A')
                     .text("Answer A")
                     .correct(true)
                 .build(),
             AnswerDto
                 .builder()
-                    .point('B')
+                    .answerOption('B')
                     .text("Answer B")
                     .correct(false)
                 .build()
         );
         final QuestionDto newQuestion = QuestionDto
                 .builder()
+                    .points(1)
                     .text("Question 1")
                     .photoUrl("https://testurlofphoto3.com")
                     .questionType(QuestionType.SINGLE_CHOICE)
@@ -332,10 +346,10 @@ class QuestionTest extends ApiTest {
                 .andExpect(jsonPath("$.photoUrl", is(newQuestion.getPhotoUrl())))
                 .andExpect(jsonPath("$.questionType", is(newQuestion.getQuestionType().name())))
                 .andExpect(jsonPath("$.answers", hasSize(2)))
-                .andExpect(jsonPath("$.answers[0].point", is(String.valueOf(newQuestion.getAnswers().get(0).getPoint()))))
+                .andExpect(jsonPath("$.answers[0].answerOption", is(String.valueOf(newQuestion.getAnswers().get(0).getAnswerOption()))))
                 .andExpect(jsonPath("$.answers[0].text", is(newQuestion.getAnswers().get(0).getText())))
                 .andExpect(jsonPath("$.answers[0].correct", is(true)))
-                .andExpect(jsonPath("$.answers[1].point", is(String.valueOf(newQuestion.getAnswers().get(1).getPoint()))))
+                .andExpect(jsonPath("$.answers[1].answerOption", is(String.valueOf(newQuestion.getAnswers().get(1).getAnswerOption()))))
                 .andExpect(jsonPath("$.answers[1].text", is(newQuestion.getAnswers().get(1).getText())))
                 .andExpect(jsonPath("$.answers[1].correct", is(false)));
     }
@@ -358,9 +372,10 @@ class QuestionTest extends ApiTest {
         final Question existingQuestion =
                 Question
                     .builder()
-                    .text("Question 1")
-                    .questionType(QuestionType.SINGLE_CHOICE)
-                    .photoUrl("http://testurlofphoto1.com")
+                        .points(1)
+                        .text("Question 1")
+                        .questionType(QuestionType.SINGLE_CHOICE)
+                        .photoUrl("http://testurlofphoto1.com")
                     .build();
 
         this.questionRepository.save(existingQuestion);

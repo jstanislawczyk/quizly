@@ -2,18 +2,18 @@ package com.quizly.models.dtos;
 
 import lombok.Builder;
 import lombok.Data;
+
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Data
 @Builder
-public class AnswerDto {
+public class QuestionAnswerDto {
 
-    private Long id;
+    private Long questionId;
 
-    private char answerOption;
+    private List<Character> answerOptions;
 
     @Size(min = 1, max = 255)
-    private String text;
-
-    private boolean correct;
+    private String answerText;
 }

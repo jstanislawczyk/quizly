@@ -10,33 +10,33 @@ import java.util.stream.Collectors;
 @Component
 public class AnswerDtoMapper {
 
-    public Answer toEntity(AnswerDto answerDto) {
+    public Answer toEntity(final AnswerDto answerDto) {
         return Answer
                 .builder()
-                    .point(answerDto.getPoint())
+                    .answerOption(answerDto.getAnswerOption())
                     .text(answerDto.getText())
                     .correct(answerDto.isCorrect())
                 .build();
     }
 
-    public AnswerDto toDto(Answer answer) {
+    public AnswerDto toDto(final Answer answer) {
         return AnswerDto
                 .builder()
                     .id(answer.getId())
-                    .point(answer.getPoint())
+                    .answerOption(answer.getAnswerOption())
                     .text(answer.getText())
                     .correct(answer.isCorrect())
                 .build();
     }
 
-    public List<Answer> toEntityList(List<AnswerDto> answerDtoList) {
+    public List<Answer> toEntityList(final List<AnswerDto> answerDtoList) {
         return answerDtoList
                 .stream()
                 .map(this::toEntity)
                 .collect(Collectors.toList());
     }
 
-    public List<AnswerDto> toDtoList(List<Answer> answerList) {
+    public List<AnswerDto> toDtoList(final List<Answer> answerList) {
         return answerList
                 .stream()
                 .map(this::toDto)

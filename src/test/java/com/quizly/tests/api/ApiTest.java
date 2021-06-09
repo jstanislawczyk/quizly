@@ -2,7 +2,8 @@ package com.quizly.tests.api;
 
 import com.quizly.repositories.AnswerRepository;
 import com.quizly.repositories.QuestionRepository;
-import org.junit.jupiter.api.AfterEach;
+import com.quizly.repositories.QuizRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -15,13 +16,17 @@ public class ApiTest {
     @Autowired
     private QuestionRepository questionRepository;
 
-    @AfterEach
-    public void afterEachTest() {
+    @Autowired
+    private QuizRepository quizRepository;
+
+    @BeforeEach
+    public void beforeEachTest() {
         cleanDatabase();
     }
 
     private void cleanDatabase() {
         answerRepository.deleteAll();
+        quizRepository.deleteAll();
         questionRepository.deleteAll();
     }
 }

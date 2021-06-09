@@ -1,6 +1,8 @@
 package com.quizly.services;
 
 import com.quizly.enums.QuestionType;
+import com.quizly.exceptions.NotFoundException;
+import com.quizly.models.entities.Answer;
 import com.quizly.models.entities.Question;
 import com.quizly.repositories.QuestionRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,11 +25,42 @@ public class QuestionService {
                 .map(Enum::name)
                 .collect(Collectors.toList());
 
-        return this.questionRepository.getRandomQuestionsByTypeWithLimit(questionTypesStrings, quantity);
+        return this.questionRepository.findRandomQuestionsByTypeWithLimit(questionTypesStrings, quantity);
     }
 
     public Optional<Question> findQuestionById(final Long id) {
         return this.questionRepository.findById(id);
+    }
+
+    public List<Question> getQuestionsByIdsWithCorrectAnswers(final List<Question> questions) {
+        return questions
+                .stream()
+                .map(question ->
+                    Question.builder()
+                        .id(question.getId())
+                        .points(question.getPoints())
+                        .questionType(question.getQuestionType())
+                        .answers(
+                            question.getAnswers()
+                                .stream()
+                                .filter(Answer::isCorrect)
+                                .collect(Collectors.toList())
+                        )
+                        .build()
+                )
+                .collect(Collectors.toList());
+    }
+
+    public Question findQuestionByIdInList(final Long id, final List<Question> questions) {
+        return questions
+            .stream()
+            .filter(question ->
+                question.getId().equals(id)
+            )
+            .findAny()
+            .orElseThrow(() ->
+                new NotFoundException("Answer for question with id=" + id + " not found")
+            );
     }
 
     public Question saveQuestion(final Question question) {

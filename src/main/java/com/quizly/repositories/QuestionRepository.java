@@ -1,6 +1,7 @@
 package com.quizly.repositories;
 
 import com.quizly.models.entities.Question;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,8 +20,11 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
             LIMIT :quantity
             """
     )
-    List<Question> getRandomQuestionsByTypeWithLimit(
+    List<Question> findRandomQuestionsByTypeWithLimit(
         @Param("types") final List<String> types,
         @Param("quantity") final int quantity
     );
+
+    @EntityGraph(attributePaths = {"answers"})
+    List<Question> findQuestionsByIdIn(final List<Long> ids);
 }
