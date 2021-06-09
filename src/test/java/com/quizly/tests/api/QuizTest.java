@@ -15,7 +15,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -215,5 +217,66 @@ class QuizTest extends ApiTest {
                 )
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.quizDurationInSeconds", is(quizDto.getQuizDurationInSeconds())));
+    }
+
+    @Test
+    void finishQuiz_ShouldThrowNotFoundIfQuizNotExists_NotFound() throws Exception {
+        // Given
+        final String uniqueCode = UUID.randomUUID().toString();
+
+        // When & Then
+        mvc.perform(
+                patch("/quiz/" + uniqueCode)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(ObjectUtils.convertObjectToJsonBytes(List.of()))
+                )
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code", is(404)))
+                .andExpect(jsonPath("$.message", is("Quiz with code=" + uniqueCode + " not found")));
+    }
+
+    @Test
+    void finishQuiz_ShouldThrowBadRequestIfQuizWasAlreadyFinished_BadRequest() throws Exception {
+        // Given
+        final Quiz quiz = Quiz
+                .builder()
+                    .uniqueCode(UUID.randomUUID().toString())
+                    .finishedAt(LocalDateTime.now())
+                .build();
+
+        this.quizRepository.save(quiz);
+
+        // When & Then
+        mvc.perform(
+                patch("/quiz/" + quiz.getUniqueCode())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(ObjectUtils.convertObjectToJsonBytes(List.of()))
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code", is(400)))
+                .andExpect(jsonPath("$.message", is("Quiz with code=" + quiz.getUniqueCode() + " was already finished")));
+    }
+
+    @Test
+    void finishQuiz_ShouldThrowBadRequestIfQuizIsOutOfDate_BadRequest() throws Exception {
+        // Given
+        final Quiz quiz = Quiz
+                .builder()
+                    .uniqueCode(UUID.randomUUID().toString())
+                    .startedAt(LocalDateTime.now().minusSeconds(60L))
+                    .quizDurationInSeconds(30)
+                .build();
+
+        this.quizRepository.save(quiz);
+
+        // When & Then
+        mvc.perform(
+                patch("/quiz/" + quiz.getUniqueCode())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(ObjectUtils.convertObjectToJsonBytes(List.of()))
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code", is(400)))
+                .andExpect(jsonPath("$.message", is("Quiz with code=" + quiz.getUniqueCode() + " is out of date")));
     }
 }
