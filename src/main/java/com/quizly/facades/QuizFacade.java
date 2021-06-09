@@ -50,15 +50,17 @@ public class QuizFacade {
 
         final List<Question> questionsWithCorrectAnswers = this.questionService.getQuestionsByIdsWithCorrectAnswers(quiz.getQuestions());
         final List<QuestionAnswer> updatedQuestionAnswers = this.updateQuestionAnswersWithQuestionData(questionAnswers, questionsWithCorrectAnswers);
-        final int correctQuestionsNumber = (int) updatedQuestionAnswers
+        final List<QuestionAnswer> correctQuestionAnswers = updatedQuestionAnswers
                 .stream()
                 .filter(QuestionAnswer::isCorrect)
-                .count();
+                .collect(Collectors.toList());
 
         quiz.setFinishedAt(finishTime);
         quiz.setQuestions(questionsWithCorrectAnswers);
         quiz.setTotalQuestions(quiz.getQuestions().size());
-        quiz.setCorrectQuestions(correctQuestionsNumber);
+        quiz.setCorrectQuestions(correctQuestionAnswers.size());
+        quiz.setGainedPoints(this.countGainedPoints(correctQuestionAnswers));
+        quiz.setTotalPoints(this.countTotalPoints(questionsWithCorrectAnswers));
 
         this.quizService.saveQuiz(quiz);
 
@@ -101,5 +103,19 @@ public class QuizFacade {
         return questionAnswer.isCorrect()
             ? question.getPoints()
             : 0;
+    }
+
+    private int countGainedPoints(final List<QuestionAnswer> correctQuestionAnswers) {
+        return correctQuestionAnswers
+                .stream()
+                .mapToInt(QuestionAnswer::getPoints)
+                .sum();
+    }
+
+    private int countTotalPoints(final List<Question> questions) {
+        return questions
+                .stream()
+                .mapToInt(Question::getPoints)
+                .sum();
     }
 }

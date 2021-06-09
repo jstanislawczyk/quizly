@@ -26,5 +26,9 @@ public class QuizDto {
 
     private int totalQuestions;
 
+    private int gainedPoints;
+
+    private int totalPoints;
+
     private List<QuestionDto> questions;
 }

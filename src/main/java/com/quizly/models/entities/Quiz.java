@@ -32,6 +32,10 @@ public class Quiz {
 
     private int totalQuestions;
 
+    private int gainedPoints;
+
+    private int totalPoints;
+
     @ManyToMany
     @JoinTable
     private List<Question> questions;

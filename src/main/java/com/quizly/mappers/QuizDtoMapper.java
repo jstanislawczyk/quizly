@@ -22,8 +22,6 @@ public class QuizDtoMapper {
     }
 
     public QuizDto toDto(final Quiz quiz) {
-        final List<QuestionDto> questionDtos = this.questionDtoMapper.toDtoList(quiz.getQuestions());
-
         return QuizDto
                 .builder()
                     .id(quiz.getId())
@@ -33,23 +31,26 @@ public class QuizDtoMapper {
                     .finishedAt(quiz.getFinishedAt())
                     .correctQuestions(quiz.getCorrectQuestions())
                     .totalQuestions(quiz.getTotalQuestions())
-                    .questions(questionDtos)
+                    .gainedPoints(quiz.getGainedPoints())
+                    .totalPoints(quiz.getTotalPoints())
                 .build();
     }
 
-    public QuizDto toDtoWithAnswers(final Quiz quiz) {
+    public QuizDto toDtoWithQuestions(final Quiz quiz) {
+        final QuizDto quizDto = this.toDto(quiz);
+        final List<QuestionDto> questionDtos = this.questionDtoMapper.toDtoList(quiz.getQuestions());
+
+        quizDto.setQuestions(questionDtos);
+
+        return quizDto;
+    }
+
+    public QuizDto toDtoWithQuestionsWithAnswers(final Quiz quiz) {
+        final  QuizDto quizDto = this.toDto(quiz);
         final List<QuestionDto> questionDtos = this.questionDtoMapper.toDtoListWithAnswers(quiz.getQuestions());
 
-        return QuizDto
-                .builder()
-                    .id(quiz.getId())
-                    .quizDurationInSeconds(quiz.getQuizDurationInSeconds())
-                    .uniqueCode(quiz.getUniqueCode())
-                    .startedAt(quiz.getStartedAt())
-                    .finishedAt(quiz.getFinishedAt())
-                    .correctQuestions(quiz.getCorrectQuestions())
-                    .totalQuestions(quiz.getTotalQuestions())
-                    .questions(questionDtos)
-                .build();
+        quizDto.setQuestions(questionDtos);
+
+        return quizDto;
     }
 }

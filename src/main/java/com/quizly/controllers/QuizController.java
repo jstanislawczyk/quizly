@@ -44,7 +44,7 @@ public class QuizController {
         final Quiz quiz = this.quizDtoMapper.toEntity(quizDto);
         final Quiz savedQuiz = this.quizFacade.createQuiz(quiz, types, quantity);
 
-        return this.quizDtoMapper.toDto(savedQuiz);
+        return this.quizDtoMapper.toDtoWithQuestions(savedQuiz);
     }
 
     @PatchMapping("/{uniqueQuizCode}")
@@ -57,6 +57,6 @@ public class QuizController {
         final List<QuestionAnswer> questionAnswers = this.questionAnswerMapper.toModelList(questionAnswerDtos);
         final Quiz finishedQuiz = this.quizFacade.finishQuiz(uniqueQuizCode, questionAnswers);
 
-        return this.quizDtoMapper.toDtoWithAnswers(finishedQuiz);
+        return this.quizDtoMapper.toDtoWithQuestionsWithAnswers(finishedQuiz);
     }
 }
