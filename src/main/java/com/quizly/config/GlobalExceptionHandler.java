@@ -1,9 +1,8 @@
 package com.quizly.config;
 
-import com.quizly.exceptions.BadRequestException;
-import com.quizly.exceptions.ExceptionResponse;
-import com.quizly.exceptions.NotFoundException;
+import com.quizly.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -27,5 +26,19 @@ public class GlobalExceptionHandler {
     public ExceptionResponse notFoundHandler(NotFoundException notFoundException) {
         log.info(notFoundException.getMessage());
         return new ExceptionResponse(NOT_FOUND.value(), notFoundException.getMessage());
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionResponse validationHandler(final ValidationException validationException){
+        log.info("ValidationException | " + validationException.getMessage());
+        return new ExceptionResponse(400, validationException.getMessage());
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ExceptionResponse conflictHandler(final ConflictException conflictException){
+        log.info("ConflictException | " + conflictException.getMessage());
+        return new ExceptionResponse(409, conflictException.getMessage());
     }
 }
