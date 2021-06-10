@@ -10,6 +10,7 @@ import com.quizly.models.dtos.QuizDto;
 import com.quizly.models.entities.Quiz;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,12 +38,13 @@ public class QuizController {
     public QuizDto createQuiz(
         @RequestBody @Valid final QuizDto quizDto,
         @RequestParam(defaultValue = "SINGLE_CHOICE") final List<QuestionType> types,
-        @RequestParam(defaultValue = "10") @Min(1) @Max(100) final int quantity
+        @RequestParam(defaultValue = "10") @Min(1) @Max(100) final int quantity,
+        final Authentication authentication
     ) {
         log.info("Preparing quiz with {} questions and types {}", quantity, types);
 
         final Quiz quiz = this.quizDtoMapper.toEntity(quizDto);
-        final Quiz savedQuiz = this.quizFacade.createQuiz(quiz, types, quantity);
+        final Quiz savedQuiz = this.quizFacade.createQuiz(quiz, types, quantity, authentication);
 
         return this.quizDtoMapper.toDtoWithQuestions(savedQuiz);
     }
