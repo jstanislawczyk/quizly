@@ -15,6 +15,8 @@ import javax.persistence.*;
 @Builder
 public class User {
 
+    public static final int MINIMUM_PASSWORD_LENGTH = 4;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
