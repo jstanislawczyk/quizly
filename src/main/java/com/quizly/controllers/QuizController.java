@@ -10,6 +10,8 @@ import com.quizly.models.dtos.QuizDto;
 import com.quizly.models.entities.Quiz;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,17 +34,32 @@ public class QuizController {
     private final QuizDtoMapper quizDtoMapper;
     private final QuestionAnswerMapper questionAnswerMapper;
 
+    @GetMapping
+    @PreAuthorize("isAuthenticated()")
+    public List<QuizDto> createQuiz(
+        @RequestParam(defaultValue = "0") @Min(0) final int page,
+        @RequestParam(defaultValue = "10") @Min(1) final int size,
+        final Authentication authentication
+    ) {
+        log.info("Fetching quizzes page {} with size {}", page, size);
+
+        final List<Quiz> quizzes = this.quizFacade.findQuizzesPageByForUser(authentication, page, size);
+
+        return this.quizDtoMapper.toDtoList(quizzes);
+    }
+
     @PostMapping
     @ResponseStatus(CREATED)
     public QuizDto createQuiz(
         @RequestBody @Valid final QuizDto quizDto,
         @RequestParam(defaultValue = "SINGLE_CHOICE") final List<QuestionType> types,
-        @RequestParam(defaultValue = "10") @Min(1) @Max(100) final int quantity
+        @RequestParam(defaultValue = "10") @Min(1) @Max(100) final int quantity,
+        final Authentication authentication
     ) {
         log.info("Preparing quiz with {} questions and types {}", quantity, types);
 
         final Quiz quiz = this.quizDtoMapper.toEntity(quizDto);
-        final Quiz savedQuiz = this.quizFacade.createQuiz(quiz, types, quantity);
+        final Quiz savedQuiz = this.quizFacade.createQuiz(quiz, types, quantity, authentication);
 
         return this.quizDtoMapper.toDtoWithQuestions(savedQuiz);
     }

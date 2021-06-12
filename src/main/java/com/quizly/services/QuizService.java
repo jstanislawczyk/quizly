@@ -4,9 +4,13 @@ import com.quizly.models.entities.Quiz;
 import com.quizly.repositories.QuizRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,6 +20,12 @@ import java.util.UUID;
 public class QuizService {
 
     private final QuizRepository quizRepository;
+
+    public List<Quiz> findQuizzesPageByUserEmail(final String email, final int page, final int size) {
+        final Pageable pageable = PageRequest.of(page, size);
+
+        return this.quizRepository.findByUserEmailWithLimit(email, pageable).getContent();
+    }
 
     public Optional<Quiz> findQuizByUniqueCode(final String uniqueCode) {
         return this.quizRepository.findQuizByUniqueCode(uniqueCode);

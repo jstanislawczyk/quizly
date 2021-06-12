@@ -36,6 +36,10 @@ public class Quiz {
 
     private int totalPoints;
 
+    @ManyToOne
+    @JoinColumn
+    private User user;
+
     @ManyToMany
     @JoinTable
     private List<Question> questions;

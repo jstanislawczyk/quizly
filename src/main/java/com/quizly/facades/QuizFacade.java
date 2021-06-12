@@ -7,10 +7,14 @@ import com.quizly.models.common.QuestionAnswer;
 import com.quizly.models.entities.Answer;
 import com.quizly.models.entities.Question;
 import com.quizly.models.entities.Quiz;
+import com.quizly.models.entities.User;
 import com.quizly.services.QuestionService;
 import com.quizly.services.QuizService;
+import com.quizly.services.UserService;
+import com.quizly.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,11 +27,27 @@ public class QuizFacade {
 
     private final QuestionService questionService;
     private final QuizService quizService;
+    private final UserService userService;
 
-    public Quiz createQuiz(final Quiz quiz, final List<QuestionType> types, final int quantity) {
+    public List<Quiz> findQuizzesPageByForUser(final Authentication authentication, final int page, final int size) {
+        final String email = SecurityUtils
+                .getUserEmail(authentication)
+                .orElseThrow(() ->
+                    new NotFoundException("User not authenticated")
+                );
+
+        return this.quizService.findQuizzesPageByUserEmail(email, page, size);
+    }
+
+    public Quiz createQuiz(
+        final Quiz quiz, final List<QuestionType> types, final int quantity, final Authentication authentication
+    ) {
         final List<Question> quizQuestions = this.questionService.getRandomQuestionsList(types, quantity);
+        final User quizUser = this.userService.getAuthenticationUser(authentication);
+
         quiz.setQuestions(quizQuestions);
         quiz.setTotalQuestions(quantity);
+        quiz.setUser(quizUser);
 
         return this.quizService.createQuiz(quiz);
     }

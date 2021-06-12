@@ -6,13 +6,16 @@ import com.quizly.exceptions.ValidationException;
 import com.quizly.models.common.UserRegisterData;
 import com.quizly.models.entities.User;
 import com.quizly.repositories.UserRepository;
+import com.quizly.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -23,6 +26,14 @@ import java.util.stream.Stream;
 public class UserService {
 
     private final UserRepository userRepository;
+
+    public User getAuthenticationUser(final Authentication authentication) {
+        final Optional<String> userEmail = SecurityUtils.getUserEmail(authentication);
+
+        return userEmail
+                .flatMap(this.userRepository::findUserByEmail)
+                .orElse(null);
+    }
 
     public User createUser(final UserRegisterData userRegisterData) {
         this.validateRegisterData(userRegisterData);
