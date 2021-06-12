@@ -10,6 +10,7 @@ import com.quizly.models.dtos.QuizDto;
 import com.quizly.models.entities.Quiz;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,20 @@ public class QuizController {
     private final QuizFacade quizFacade;
     private final QuizDtoMapper quizDtoMapper;
     private final QuestionAnswerMapper questionAnswerMapper;
+
+    @GetMapping
+    @PreAuthorize("isAuthenticated()")
+    public List<QuizDto> createQuiz(
+        @RequestParam(defaultValue = "0") @Min(0) final int page,
+        @RequestParam(defaultValue = "10") @Min(1) final int size,
+        final Authentication authentication
+    ) {
+        log.info("Fetching quizzes page {} with size {}", page, size);
+
+        final List<Quiz> quizzes = this.quizFacade.findQuizzesPageByForUser(authentication, page, size);
+
+        return this.quizDtoMapper.toDtoList(quizzes);
+    }
 
     @PostMapping
     @ResponseStatus(CREATED)
