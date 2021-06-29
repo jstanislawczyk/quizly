@@ -1,14 +1,18 @@
 package com.quizly.models.dtos;
 
 import com.quizly.enums.QuestionType;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.*;
 import java.util.List;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class QuestionDto {
 
     private Long id;

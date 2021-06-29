@@ -46,6 +46,15 @@ public class QuizDtoMapper {
         return quizDto;
     }
 
+    public QuizDto toDtoWithQuestionsWithoutCorrect(final Quiz quiz) {
+        final QuizDto quizDto = this.toDto(quiz);
+        final List<QuestionDto> questionDtos = this.questionDtoMapper.toDtoListWithAnswersWithoutCorrect(quiz.getQuestions());
+
+        quizDto.setQuestions(questionDtos);
+
+        return quizDto;
+    }
+
     public QuizDto toDtoWithQuestionsWithAnswers(final Quiz quiz) {
         final  QuizDto quizDto = this.toDto(quiz);
         final List<QuestionDto> questionDtos = this.questionDtoMapper.toDtoListWithAnswers(quiz.getQuestions());

@@ -46,6 +46,15 @@ public class QuestionDtoMapper {
         return questionDto;
     }
 
+    public QuestionDto toDtoWithAnswersWithoutCorrect(final Question question) {
+        final QuestionDto questionDto = this.toDto(question);
+        final List<AnswerDto> answersDtos = this.answerDtoMapper.toDtoListWithoutCorrect(question.getAnswers());
+
+        questionDto.setAnswers(answersDtos);
+
+        return questionDto;
+    }
+
     public List<QuestionDto> toDtoList(final List<Question> questions) {
         return questions
                 .stream()
@@ -57,6 +66,13 @@ public class QuestionDtoMapper {
         return questions
                 .stream()
                 .map(this::toDtoWithAnswers)
+                .collect(Collectors.toList());
+    }
+
+    public List<QuestionDto> toDtoListWithAnswersWithoutCorrect(final List<Question> questions) {
+        return questions
+                .stream()
+                .map(this::toDtoWithAnswersWithoutCorrect)
                 .collect(Collectors.toList());
     }
 }

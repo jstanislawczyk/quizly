@@ -13,8 +13,8 @@ public class UserRegisterDataDtoMapper {
         return UserRegisterData
                 .builder()
                     .email(userRegisterDataDto.getEmail())
-                    .password(userRegisterDataDto.getPassword())
-                    .passwordRepeat(userRegisterDataDto.getPasswordRepeat())
+                    .password(userRegisterDataDto.getPassword().toCharArray())
+                    .passwordRepeat(userRegisterDataDto.getPasswordRepeat().toCharArray())
                 .build();
     }
 }

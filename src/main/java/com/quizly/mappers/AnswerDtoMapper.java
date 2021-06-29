@@ -29,6 +29,15 @@ public class AnswerDtoMapper {
                 .build();
     }
 
+    public AnswerDto toDtoWithoutCorrect(final Answer answer) {
+        return AnswerDto
+                .builder()
+                    .id(answer.getId())
+                    .answerOption(answer.getAnswerOption())
+                    .text(answer.getText())
+                .build();
+    }
+
     public List<Answer> toEntityList(final List<AnswerDto> answerDtoList) {
         return answerDtoList
                 .stream()
@@ -40,6 +49,13 @@ public class AnswerDtoMapper {
         return answerList
                 .stream()
                 .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<AnswerDto> toDtoListWithoutCorrect(final List<Answer> answerList) {
+        return answerList
+                .stream()
+                .map(this::toDtoWithoutCorrect)
                 .collect(Collectors.toList());
     }
 }

@@ -11,12 +11,10 @@ import javax.validation.constraints.Email;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRegisterDataDto {
+public class UserLoginDataDto {
 
     @Email
     private String email;
 
     private String password;
-
-    private String passwordRepeat;
 }
