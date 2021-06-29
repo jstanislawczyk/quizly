@@ -36,16 +36,29 @@ public class QuizController {
 
     @GetMapping
     @PreAuthorize("isAuthenticated()")
-    public List<QuizDto> createQuiz(
+    public List<QuizDto> getUserQuizzes(
         @RequestParam(defaultValue = "0") @Min(0) final int page,
         @RequestParam(defaultValue = "10") @Min(1) final int size,
         final Authentication authentication
     ) {
         log.info("Fetching quizzes page {} with size {}", page, size);
 
-        final List<Quiz> quizzes = this.quizFacade.findQuizzesPageByForUser(authentication, page, size);
+        final List<Quiz> quizzes = this.quizFacade.getQuizzesPageByForUser(authentication, page, size);
 
         return this.quizDtoMapper.toDtoList(quizzes);
+    }
+
+    @GetMapping("/{code}")
+    @PreAuthorize("isAuthenticated()")
+    public QuizDto getUserQuizByCode(
+        @PathVariable final String code,
+        final Authentication authentication
+    ) {
+        log.info("Fetching quiz by code=" + code);
+
+        final Quiz quiz = this.quizFacade.getUserQuizByCodeForUser(authentication, code);
+
+        return this.quizDtoMapper.toDtoWithQuestionsWithAnswers(quiz);
     }
 
     @PostMapping
@@ -61,7 +74,7 @@ public class QuizController {
         final Quiz quiz = this.quizDtoMapper.toEntity(quizDto);
         final Quiz savedQuiz = this.quizFacade.createQuiz(quiz, types, quantity, authentication);
 
-        return this.quizDtoMapper.toDtoWithQuestions(savedQuiz);
+        return this.quizDtoMapper.toDtoWithQuestionsWithoutCorrect(savedQuiz);
     }
 
     @PatchMapping("/{uniqueQuizCode}")

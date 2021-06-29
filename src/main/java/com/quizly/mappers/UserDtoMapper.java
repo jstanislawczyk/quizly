@@ -19,4 +19,16 @@ public class UserDtoMapper {
                     .role(user.getRole())
                 .build();
     }
+
+    public UserDto toDtoWithPassword(final User user) {
+        return UserDto
+                .builder()
+                    .id(user.getId())
+                    .email(user.getEmail())
+                    .password(user.getPassword())
+                    .firstName(user.getFirstName())
+                    .lastName(user.getLastName())
+                    .role(user.getRole())
+                .build();
+    }
 }

@@ -4,7 +4,6 @@ import com.quizly.models.entities.Quiz;
 import com.quizly.repositories.QuizRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,6 +24,10 @@ public class QuizService {
         final Pageable pageable = PageRequest.of(page, size);
 
         return this.quizRepository.findByUserEmailWithLimit(email, pageable).getContent();
+    }
+
+    public Quiz findQuizByCodeAndUserEmail(final String email, final String code) {
+        return this.quizRepository.findQuizByUniqueCode(code).get();
     }
 
     public Optional<Quiz> findQuizByUniqueCode(final String uniqueCode) {

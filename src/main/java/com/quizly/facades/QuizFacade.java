@@ -29,7 +29,7 @@ public class QuizFacade {
     private final QuizService quizService;
     private final UserService userService;
 
-    public List<Quiz> findQuizzesPageByForUser(final Authentication authentication, final int page, final int size) {
+    public List<Quiz> getQuizzesPageByForUser(final Authentication authentication, final int page, final int size) {
         final String email = SecurityUtils
                 .getUserEmail(authentication)
                 .orElseThrow(() ->
@@ -37,6 +37,16 @@ public class QuizFacade {
                 );
 
         return this.quizService.findQuizzesPageByUserEmail(email, page, size);
+    }
+
+    public Quiz getUserQuizByCodeForUser(final Authentication authentication, final String code) {
+        final String email = SecurityUtils
+                .getUserEmail(authentication)
+                .orElseThrow(() ->
+                    new NotFoundException("User not authenticated")
+                );
+
+        return this.quizService.findQuizByCodeAndUserEmail(email, code);
     }
 
     public Quiz createQuiz(
